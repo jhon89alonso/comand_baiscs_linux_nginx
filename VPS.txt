@@ -1,0 +1,413 @@
+SSH
+ssh-keygen --Crear .ssh clave
+ssh usuario@ip --Conexión 
+
+UBUNTU
+
+ls -la --Ver ocultos tambien 
+ll 
+pwd -- Ver dirección donde estamos
+cd - --Anterior
+
+nano --Crear y editar si ya existe
+touch --Crea
+
+cat
+less --visualizar -- salir con q
+
+mv [doc] [directorio --/root --no 	obligatorio] -- mover y tambien 	cambiar nombre
+
+cp [doc] [Otro nombre] --copiar
+
+rm --eliminar
+
+mkdir doc --crear carpeta 
+
+/* #para rm todo lo que este alli
+
+cp -r --para carpetas
+rm -r 
+
+timedatectl set-timezone <zone> -- Cambiar zona horaria
+
+date >> archivo.txt -- Guarda la fecha 
+
+crontab -e -- abre cron donde se configura
+
+Minute Hour Day Month Day
+
+alias code="lo que queremos que sea alias"
+
+-----------------------------------
+
+adduser <name> --Crear usuario
+
+adduser <name> sudo -- Permisos sudo
+
+deluser <name> --remove-home
+
+sudo usermod -a -G www-data jesusdev -- Agregar usuario a grupo 
+
+getent group www-data -- Ver usuario de grupo
+
+------------------------------------
+
+home/mateolez/.ssh/authorized_keys
+
+sudo !! -- Sudo con comanto anterior
+
+-------------------------------------
+
+sudo nano /etc/ssh/sshd_config --Configuración de SSH
+
+----------INGRESAR CON PASSWORD -----
+PasswordAuthentication <booleano>
+
+----------ROOT LOGIN ----------------
+PermitRootLogin <booleano>
+
+sudo systemctl reload ssh.service --Recargar SSH
+
+---------------------------------
+
+sudo su -- Iniciar como ROOT
+
+
+----- UFW FIREWALL ----------------
+
+ufw status -- Estado
+
+ufw app list -- App que usan IPS
+
+ufw allow "<app>" --Permitir todo App
+
+ufw allow enable
+
+sudo ufw status numbered -- enumerar
+
+sudo ufw delete [numero] --elimnar con numero
+
+----------PERMISOS DE DIR o FILES ----
+
+d = directorio
+
+l = file
+
+- = sin permiso
+
+3 - Creador
+3 - Grupo
+3 - Otro Usuario
+
+r = ver
+w = escribir o editar 
+x = ejecutar
+
+chmod -R 777 -- Permiso a todo
+
+chown -R <user>:<group> <dir>
+
+------ FAIL2BAN -----------
+
+sudo apt install fail2ban -- Instalar
+
+cd /etc/fail2ban/jail.conf -- Configurar
+
+sudo fail2ban-client status -- estado
+
+systemctl restart fail2ban.service --reiniciar
+
+fail2ban-client status set sshd -- Estado SSH
+
+fail2ban-client set sshd unbanip <ip> -- Quitar baneo a la ip
+
+systemctl stop fail2ban.service -- Parar servicio
+
+
+--------- NGINX ------------------
+
+npm install nginx
+
+/etc/nginx
+
+------- SITES AVAILABLE -------
+
+Recomenado domain 
+glpiimpsercom.net --file
+
+root /var/www/glpiimpsercom.net; --Directorio del proyecto
+
+server_name <|sub|domain>
+
+ln -s <available> - <enabled> --Acceso directo
+
+nginx -t --test Nginx
+
+-------- MYSQL -------------------
+
+apt install mysql-server
+
+mysql --version
+
+mysql_secure_installation --Seguridad
+
+mysql -u root -p --login
+
+--- En mysql -------
+
+CREATE USER <user>@localhost IDENTIFIED BY 'password' -- Crear usuario
+
+SELECT user, host, plugin from mysql.user --usuarios
+
+GRANT ALL PRIVILEGES ON *.* TO MateoLez@localhost --todos los privilegios
+
+GRAN ALL PRIVILEGES ON <db> to <user>@localhost --privilegios en un solo esa tabla
+
+GRANT ALL PRIVILEGES ON `www-romancerelax-com-prestashop`.* TO 'jesusdev'@'%'
+
+FLUSH PRIVILEGES; --recargar privilegios
+
+#PERMISOS
+show grants for MateoLez@'localhost';
+
+----- ESTABLECER UN TUNER SSH para mySQL ---
+
+ssh <host> -L <portLocal>:ip:mysql -N
+
+ssh Lez -L 3333:localhost:3306 -N
+
+Conexión localhost con el puerto 3333
+
+------- BLOQUEAR ACCESO A .ht y .git ---
+
+        # deny access to .htaccess files, if Apache's document root
+        # concurs with nginx's one
+        #
+        location ~ /\.ht {
+                deny all;
+        }
+        # deny access to .git
+        #
+        location ~ /\.git {
+                deny all;
+        }
+
+------ BLOQUEAR firma NGINX ------
+
+nginx.conf 
+server_tokens off
+
+------ HEADERS CONFIG SECURITY ----
+# Security Setting
+
+# Avoid iFrames from different origins
+add_header X-Frame-Options SAMEORIGINS;
+
+# Avoid MIME types sniff
+add_header X-Content-Type-Options nosniff;
+
+# Avoid XSS attacks
+add_header X-XSS-Protection "1; mode=block";
+
+# Referrer Policy, only use full path on same origin
+add_header Referrer-Policy "strict-origin-when-cross-origin";
+
+https://securityheaders.com/
+
+----- Compresión GZIP -------
+
+nginx.conf 
+
+gzip on;
+Todos menos gzip-proxied any;
+
+----- DoS Protection ---------
+
+OneDrive snippets/dos-protection.conf
+
+--file ginx.conf
+include snippets/dos-protection.conf
+
+
+------- Configuracción Redireccionamiento ----
+
+server {
+        listen 80;
+        listen [::]:80;
+
+	server_name http://glpiimpsercom.net;
+
+	return 301 http://www.glpiimpsercom.net;
+}
+
+------------ SSL -------------------
+
+cerbot: https://certbot.eff.org/instructions?ws=nginx&os=ubuntufocal
+
+sudo certbot renew --dry-run #verificar Certificados
+sudo certbot certificates # Ver certificados
+
+certbot --nginx --hsts  --staple-ocsp --must-staple -d <domain> -d <domain> #Para optimize el servicio
+
+systemctl list-timers --Ver cronjobs activos
+
+sites-available  -- HTTP2
+    listen [::]:443 ssl ipv6only=on http2; # managed by Certbot
+    listen 443 ssl http2; # managed by Certbot
+
+https://www.ssllabs.com/ssltest/ #test SSL
+
+----- PASAR ARCHIVOS --------
+scp -r host(local):/ host(vps):/ --Pasar carpetas
+
+#Desde 
+scp -r C:\Users\PROGRAMADOR\Documents\new_subdomain Lez:/home/mateolez 
+
+----- Descargar archivos ---
+wget
+
+wget [donde esta] -O Nombre
+
+wget https://www.juandmegon.com/main.html -O index.html
+
+----- Git ---------
+
+sudo git clone git@repository <nombre carpeta>
+
+sudo git pull --sincronizar 
+
+---- Eliminar Sitio -------
+
+eliminar carpeta /var/www
+Eliminar sites-available y enabled
+archivos 
+
+#Ver certificados
+sudo certbot certificates
+
+#Eliminar certificados
+sudo certbot revoke --cert-name=<domain>
+
+----- PHP FPM -------
+
+# Varias versiones y modulos de php
+sudo add-apt-repository ppa:ondrej/php
+
+#Actualizar
+sudo apt update
+
+#INSTALAR PHP FPM 
+sudo apt install php-fpm 
+
+#OTRAS VERSIONES
+sudo apt install php7.4-fpm 
+
+#Deshabilitar opción para seguridad
+cgi.fix = 0
+
+var/log/php* #logs PHP
+
+#Configurar Version Nginx PHP
+https://help.clouding.io/hc/es/articles/360021630059-C%C3%B3mo-Instalar-m%C3%BAltiples-versiones-de-PHP-7-2-7-4-and-8-0-en-Ubuntu-20-04
+
+#EXTENSIONES sudo apt install --
+
+php-mysql
+php-sqlite3
+php-curl
+php-gd
+php-mbstring
+php-xml
+php-xmlrpc
+php-zip
+ext-grpc
+
+#Cambiar version PHP para instalar extensiones 
+update-alternatives --config php 
+
+#Nginx versiones php 
+sudo apt-get install nginx -y
+
+#CONFIGURAR SERVER VERSION PHP
+server { # php/fastcgi
+        listen       80;
+        server_name _;
+        root /var/www/html/;
+        index info.php;
+        access_log /var/log/nginx/access_log;
+        error_log /var/log/nginx/error_log;
+        location ~ \.php$ {
+                try_files $uri =404;
+                fastcgi_pass unix:/run/php/php7.2-fpm.sock;
+                fastcgi_index index.php;
+                fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+                include fastcgi_params;
+        }
+}
+
+#VERSION DE CONFIGURACIÓN
+fastcgi_pass unix:/run/php/php7.2-fpm.sock;
+
+
+------ COMPOSER ---------
+#Composer Instalar
+https://getcomposer.org/download/
+
+#Mover para poder usarlo global
+sudo mv composer.phar /usr/local/bin/composer
+
+#actualizar
+composer self-update
+
+----------- WP-CLI -----
+https://wp-cli.org/
+
+
+Es necesario habilitar los enlaces permanentes de Wordpress. para ello en el bloque location / {] hay que poner "try_files $uri $uri/ /index.php?$args;" en lugar de "try_files $uri $uri/ =404;"
+
+---- WP INSTALAR ----------
+
+#Instalar WP
+sudo wp core download --allow-rootMatch User tu_usuario
+    ForceCommand internal-sftp
+    ChrootDirectory /ruta/al/directorio
+    PermitTunnel no
+    AllowAgentForwarding no
+    AllowTcpForwarding no
+    X11Forwarding no
+
+try_files $uri $uri/ /index.php$is_args$args;
+
+/var/www/wordpress.romancerelaxbibox.com/wp-content/plugins
+
+
+
+----------- NPM - NODE JS -----------------------------
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
+
+source ~/.bashrc
+
+
+----------- DOCKER MYSQL -------------------
+
+3603
+
+SET GLOBAL sql_mode = 'TRADITIONAL'; -- Versiones anteriores 
+
+----------------- PRESTASHOP ------------------------
+Modo dev config > defines.inc.php > document
+_PS_MODE_DEV_, true
+
+-------------- configurar impresora -----------------
+ ping <ip_address_printer>
+sudo lpinfo -v
+sudo lpinfo -m
+sudo lpinfo -v
+#lpadmin -p HP_BLQ -v ipps://HP%20LaserJet%20M402n%20(217D33)._ipps._tcp.local/
+lpadmin -p HP_BLQCAS -E -v ipp://192.168.168.134/ipp/print -m everywhere
+lpinfo -p <name_printer> -r classname
+sudo lpinfo -x <name_printer>
+sudo lpadmin -x <name_printer>
+
+sudo systemctl restart cups
+sudo systemctl status cups
