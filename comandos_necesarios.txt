@@ -1,0 +1,573 @@
+# Gestión de paquetes y actualizaciones
+
+- Actualizar lista de paquetes:
+  sudo apt update
+
+- Actualizar todos los paquetes instalados:
+  sudo apt upgrade
+
+- Instalar un paquete específico:
+  sudo apt install nombre_paquete
+
+- Eliminar un paquete:
+  sudo apt remove nombre_paquete
+
+- Limpiar paquetes no necesarios:
+  sudo apt autoremove
+
+# Gestión de archivos y directorios
+
+- Buscar archivos por nombre:
+  find /ruta -name nombre_archivo
+
+- Buscar archivos por tipo y tamaño:
+  find /ruta -type f -size +10M
+
+- Ver el uso de espacio en disco por directorio:
+  du -h --max-depth=1 directorio
+
+# Gestión de servicios y procesos
+
+- Verificar el estado de un servicio específico:
+  sudo systemctl status nombre_servicio
+
+- Iniciar un servicio:
+  sudo systemctl start nombre_servicio
+
+- Detener un servicio:
+  sudo systemctl stop nombre_servicio
+
+- Reiniciar un servicio:
+  sudo systemctl restart nombre_servicio
+
+- Ver los procesos en ejecución:
+  ps aux
+
+- Matar un proceso por ID:
+  sudo kill -9 PID
+
+# Gestión de redes
+
+- Ver configuración de red:
+  ip addr show
+
+- Reiniciar interfaz de red:
+  sudo systemctl restart network.service
+
+- Verificar puertos abiertos y conexiones:
+  netstat -tuln
+
+- Comprobar conectividad con un servidor remoto:
+  ping ip_servidor
+
+# Gestión de archivos comprimidos
+
+- Descomprimir un archivo .zip:
+  unzip archivo.zip
+
+- Comprimir archivos en formato .zip:
+  zip -r archivo.zip directorio
+
+# Gestión de usuarios y permisos
+
+- Cambiar contraseña de usuario:
+  sudo passwd nombre_usuario
+
+- Bloquear un usuario:
+  sudo passwd -l nombre_usuario
+
+- Desbloquear un usuario:
+  sudo passwd -u nombre_usuario
+
+# Gestión de logs
+
+- Ver los últimos registros de un archivo de log:
+  tail -n 100 archivo.log
+
+- Buscar términos dentro de un archivo de log:
+  grep "texto_a_buscar" archivo.log
+
+# Gestión de archivos remotos
+
+- Descargar archivos desde FTP o HTTP:
+  curl -O URL_archivo
+
+- Subir archivos a un servidor FTP:
+  curl -T archivo ftp://usuario@servidor/directorio
+
+# Gestión de permisos avanzada
+
+- Ver ACLs (Listas de Control de Acceso):
+  getfacl archivo_o_directorio
+
+- Configurar ACLs:
+  setfacl -m u:usuario:rwx archivo_o_directorio
+
+# Gestión de Docker (si es aplicable)
+
+- Listar contenedores en ejecución:
+  docker ps
+
+- Detener un contenedor:
+  docker stop nombre_contenedor
+
+- Eliminar un contenedor:
+  docker rm nombre_contenedor
+
+- Ver imágenes Docker:
+  docker images
+
+- Eliminar una imagen Docker:
+  docker rmi nombre_imagen
+
+# Gestión de PHP y Composer
+
+- Instalar Composer globalmente:
+  sudo mv composer.phar /usr/local/bin/composer
+
+- Versiones de PHP 
+# Varias versiones y modulos de php
+  sudo add-apt-repository ppa:ondrej/php
+- Instalar PHP FPM:
+  sudo apt install php-fpm
+
+- Configurar PHP en Nginx:
+  location ~ \.php$ {
+      try_files $uri =404;
+      fastcgi_pass unix:/run/php/php7.4-fpm.sock;
+      fastcgi_index index.php;
+      fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+      include fastcgi_params;
+  }
+
+# Gestión de seguridad y auditoría
+
+- Verificar configuración de seguridad:
+  sudo auditctl -l
+
+- Auditar eventos de sistema:
+  sudo aureport
+
+- Escanear vulnerabilidades en sistema:
+  sudo apt-get install clamav
+  sudo freshclam
+  sudo clamscan -r /ruta_a_escanear
+
+# Herramientas adicionales
+
+- Monitorizar uso de CPU y memoria:
+  top
+
+- Verificar información del sistema:
+  uname -a
+
+- Reiniciar el sistema:
+  sudo reboot
+
+# Gestión de archivos de configuración
+
+- Editar archivo de configuración de Nginx:
+  sudo nano /etc/nginx/nginx.conf
+
+- Editar archivo de configuración de PHP:
+  sudo nano /etc/php/7.4/fpm/php.ini
+
+# Gestión de firewall adicional
+
+- Configurar reglas de iptables:
+  sudo iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+
+- Guardar configuración de iptables:
+  sudo iptables-save > /etc/iptables/rules.v4
+
+- Restaurar configuración de iptables:
+  sudo iptables-restore < /etc/iptables/rules.v4
+
+# Comandos para desarrollo web
+
+- Compilar assets con npm:
+  npm run build
+
+- Instalar dependencias de un proyecto Node.js:
+  npm install
+
+- Ejecutar pruebas unitarias o de integración:
+  npm test
+
+- Verificar versiones de Node.js y npm:
+  node -v
+  npm -v
+
+# Comandos SSH
+1. Crear clave SSH:
+   ssh-keygen
+
+2. Conexión SSH:
+   ssh usuario@ip
+
+# Comandos básicos de Ubuntu
+
+- Listar archivos, incluyendo los ocultos:
+  ls -la
+
+- Listar archivos en formato largo:
+  ll
+
+- Mostrar la ruta del directorio actual:
+  pwd
+
+- Cambiar al directorio anterior:
+  cd -
+
+- Editar o crear un archivo con nano:
+  nano archivo.txt
+
+- Crear un archivo vacío:
+  touch archivo.txt
+
+- Mostrar el contenido de un archivo:
+  cat archivo.txt
+
+- Ver el contenido de un archivo, con la opción de paginar:
+  less archivo.txt
+
+- Mover o renombrar un archivo:
+  mv archivo.txt nuevo_directorio/
+
+- Copiar un archivo:
+  cp archivo.txt copia_archivo.txt
+
+- Eliminar un archivo:
+  rm archivo.txt
+
+- Crear un directorio:
+  mkdir directorio
+
+- Copiar un directorio:
+  cp -r directorio directorio_copia
+
+- Eliminar un directorio:
+  rm -r directorio
+
+# Gestión de usuarios
+
+- Crear un nuevo usuario:
+  adduser nombre_usuario
+
+- Asignar permisos sudo a un usuario:
+  adduser nombre_usuario sudo
+
+- Eliminar un usuario (opcionalmente, eliminar su directorio home):
+  deluser --remove-home nombre_usuario
+
+- Agregar un usuario a un grupo:
+  sudo usermod -a -G nombre_grupo nombre_usuario
+
+- Ver los usuarios de un grupo:
+  getent group nombre_grupo
+
+# Configuración SSH
+
+- Editar configuración SSH:
+  sudo nano /etc/ssh/sshd_config
+
+  - Permitir autenticación por contraseña:
+    PasswordAuthentication yes/no
+
+  - Permitir login de root:
+    PermitRootLogin yes/no
+
+- Recargar el servicio SSH:
+  sudo systemctl reload ssh.service
+
+# Firewall UFW
+
+- Ver el estado del firewall:
+  ufw status
+
+- Listar aplicaciones que usan puertos:
+  ufw app list
+
+- Permitir todo el tráfico para una aplicación específica:
+  ufw allow "nombre_app"
+
+- Habilitar UFW:
+  ufw enable
+
+- Enumerar reglas de UFW:
+  sudo ufw status numbered
+
+- Eliminar una regla de UFW por su número:
+  sudo ufw delete número_regla
+
+# Permisos de archivos y directorios
+
+- Cambiar permisos de un archivo/directorio recursivamente:
+  chmod -R 777 archivo_o_directorio
+
+- Cambiar propietario de un archivo/directorio recursivamente:
+  chown -R usuario:grupo archivo_o_directorio
+
+# Fail2Ban
+
+- Instalar Fail2Ban:
+  sudo apt install fail2ban
+
+- Editar configuración de Fail2Ban:
+  sudo nano /etc/fail2ban/jail.conf
+
+- Ver el estado de Fail2Ban:
+  sudo fail2ban-client status
+
+- Reiniciar Fail2Ban:
+  sudo systemctl restart fail2ban.service
+
+- Ver el estado del jail SSH:
+  sudo fail2ban-client status sshd
+
+- Quitar el baneo a una IP:
+  sudo fail2ban-client set sshd unbanip ip_baneada
+
+- Detener Fail2Ban:
+  sudo systemctl stop fail2ban.service
+
+# Nginx
+
+- Instalar Nginx:
+  sudo apt install nginx
+
+- Directorio de configuración de Nginx:
+  /etc/nginx
+
+- Crear un enlace simbólico para habilitar un sitio:
+  ln -s /etc/nginx/sites-available/sitio /etc/nginx/sites-enabled/
+
+- Probar la configuración de Nginx:
+  nginx -t
+
+- Recargar Nginx:
+  sudo systemctl reload nginx
+  #Para errores al recargar
+  sudo systemctl daemon-reload && sudo systemctl reload nginx.service
+
+# MySQL
+
+- Instalar MySQL:
+  sudo apt install mysql-server
+
+- Verificar estado de MySQL:
+  sudo systemctl status mysql
+
+- Asegurar instalación de MySQL:
+  sudo mysql_secure_installation
+
+- Conectarse a MySQL:
+  mysql -u root -p
+
+- Crear un usuario en MySQL:
+  CREATE USER 'usuario'@'localhost' IDENTIFIED BY 'password';
+
+- Asignar todos los privilegios a un usuario en MySQL:
+  GRANT ALL PRIVILEGES ON *.* TO 'usuario'@'localhost';
+
+- Recargar privilegios en MySQL:
+  FLUSH PRIVILEGES;
+
+- Mostrar privilegios de un usuario:
+  SHOW GRANTS FOR 'usuario'@'localhost';
+- Mostrar databases
+  SHOW DATABASES;
+
+# Comandos adicionales
+
+- Crear un alias:
+  alias nombre_alias='comando'
+
+- Establecer zona horaria:
+  timedatectl set-timezone zona_horaria
+
+- Añadir la fecha a un archivo:
+  date >> archivo.txt
+
+- Editar crontab:
+  crontab -e
+
+- Listar cronjobs activos:
+  systemctl list-timers
+
+- Pasar archivos entre servidores con SCP:
+  scp -r origen destino
+
+- Descargar archivos con wget:
+  wget url -O nombre_archivo
+
+- Clonar repositorio Git:
+  sudo git clone url_repositorio nombre_directorio
+
+- Sincronizar repositorio Git:
+  sudo git pull
+
+- Cambiar versión de PHP:
+  sudo update-alternatives --config php
+
+- Instalar extensiones de PHP:
+  sudo apt install php-extensión
+
+- Mover Composer para uso global:
+  sudo mv composer.phar /usr/local/bin/composer
+
+- Actualizar Composer:
+  composer self-update
+
+- Instalar Node.js y NPM:
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
+
+- Configurar redireccionamiento en Nginx:
+  server {
+      listen 80;
+      listen [::]:80;
+      server_name dominio;
+      return 301 http://www.dominio;
+  }
+
+- Configurar SSL con Certbot:
+  sudo certbot --nginx --hsts --staple-ocsp --must-staple -d dominio -d subdominio
+
+- Verificar certificados SSL:
+  sudo certbot certificates
+
+- Renovar certificados SSL:
+  sudo certbot renew --dry-run
+
+# Nginx seguridad
+
+- Bloquear acceso a .ht y .git en Nginx:
+  location ~ /\.ht {
+      deny all;
+  }
+  location ~ /\.git {
+      deny all;
+  }
+
+- Descomentar al hacer sudo nano nginx.conf
+  # server_tokens off;
+
+
+- Configuración de seguridad en Nginx:
+  -- sudo nano snippets/security-headers.conf
+  ##
+  #Security Setting
+  #
+
+  #Avoid iframes from diferent origins
+   add_header X-Frame-Options SAMEORIGIN;
+  #Avoid MIME types saniff
+   add_header X-Content-Type-Options nosniff;
+  #Avoid XSS attacks
+   add_header X-XSS-Protection "1; mode=block";
+  #Avoid Referrer policy, only ise full path on same origin
+   add_header Referrer-Policy "strict-origin-when-cross-origin";
+
+  #Incluirlo en los archivos de sites-available
+   include snippets/security-headers.conf
+
+  # https://securityheaders.com/
+
+- Configuración de compresión GZIP en Nginx en sudo nano nginx.conf:
+  gzip on;
+
+- Configuración de protección contra DoS en Nginx:
+  # crear sudo nano snippets/dos-protection.conf y pegar
+  ##
+  # DoS and DDoS Protection Settings
+  ##
+
+  #Define limit connection zone called conn_limit_per_ip with memory size 15m based on the un$
+  limit_conn_zone $binary_remote_addr zone=conn_limit_per_ip:15m;
+
+  #Define limit request to 40/sec in zone called req_limit_per_ip memory size 15m based on IP
+  limit_req_zone $binary_remote_addr zone=req_limit_per_ip:15m rate=40r/s;
+
+  #Using the zone called conn_limit_per_ip with max 40 connections per IP
+  limit_conn conn_limit_per_ip 40;
+
+  #Using the zone req_limit_per_ip with an exceed queue of size 40 without delay for the 40 a$
+  limit_req zone=req_limit_per_ip burst=40 nodelay;
+
+  #Do not wait for the client body or headers more than 5s (avoid slowloris attack)
+  client_body_timeout 5s;
+  client_header_timeout 5s;
+  send_timeout 5;
+
+  #Establishing body and headers max size to avoid overloading the server I/O
+  client_body_buffer_size 256k;
+  client_header_buffer_size 2k;
+  client_max_body_size 3m;
+  large_client_header_buffers 2 2k;
+  
+  # Incluirlo en sudo nano nginx.conf
+  include snippets/dos-protection.conf;
+
+# Backup y restauración MySQL
+
+- Realizar un backup de MySQL:
+  mysqldump -u usuario -p nombre_base_datos > /ruta/backup
+
+# Instalar CERBOT
+  sudo snap install --classic certbot
+
+- Verificar funcionamiento cerbot
+  sudo cerbot renew --dry-run
+
+- Remover cerbot
+  sudo apt-get remove certbot
+- si genera error como este sudo: cerbot: command not found
+--hacer
+  sudo snap run certbot renew --dry-run # no debe generar error
+  sudo snap alias certbot.certbot certbot
+  sudo certbot renew --dry-run
+
+- instalador de certificados 
+  certbot --nginx --hsts  --staple-ocsp --must-staple -d <domain> -d <domain> #Para optimize el servicio
+
+$CUPS
+- Instalación de CUPS
+  sudo apt update
+  sudo apt install cups
+- Iniciar y habilitar el servicio CUPS
+  sudo systemctl start cups
+  sudo systemctl enable cups
+- Configuración de CUPS
+  sudo nano /etc/cups/cupsd.conf
+  BUSCAR 
+  Port 631
+  Listen /var/run/cups/cups.sock
+  Listen localhost:631
+  Listen 192.168.168.134:631
+
+  <Location />
+    Order allow,deny
+    Allow @LOCAL
+  </Location>
+
+  <Location /admin>
+    Order allow,deny
+    Allow @LOCAL
+  </Location>
+
+  <Location /admin/conf>
+    AuthType Default
+    Require user @SYSTEM
+    Order allow,deny
+    Allow @LOCAL
+  </Location>
+- Reiniciar CUPS después de cambios
+  sudo systemctl restart cups
+- Comprobar que CUPS está escuchando en los puertos correctos
+  sudo netstat -tuln | grep 631
+- Permitir el tráfico en el firewall (si está activo)
+  sudo ufw allow 631
+- Agregar una impresora de red desde la línea de comandos
+  lpadmin -p NOMBRE -E -v socket://1..IP  -m drv:///sample.drv/generic.ppd
+- Imprimir una página de prueba
+  lp -d HP_BLOQUES /etc/hosts

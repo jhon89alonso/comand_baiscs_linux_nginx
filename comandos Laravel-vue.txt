@@ -1,0 +1,112 @@
+# Configuración inicial de Laravel
+
+1. Crear un nuevo proyecto Laravel:
+   composer create-project --prefer-dist laravel/laravel nombre_proyecto
+
+2. Configurar archivo .env con detalles de la base de datos y otros ajustes necesarios.
+	cp .env-example .env
+
+3. Generar clave de aplicación:
+   php artisan key:generate
+
+# Desarrollo con Vue.js en Laravel
+
+1. Instalar Laravel UI (opcional para versiones recientes de Laravel):
+   composer require laravel/ui
+
+2. Instalar Vue.js con Laravel Mix:
+   npm install
+   npm run dev
+
+3. Compilar assets con Laravel Mix:
+   npm run dev  # desarrollo
+   npm run watch  # desarrollo con watcher
+   npm run prod  # producción
+
+# Desarrollo con Vite en Laravel (opcional)
+
+1. Instalar Vite en Laravel (requiere configuración adicional):
+   npm init vite@latest
+
+2. Configurar Vite para integración con Laravel (ejemplo de archivo vite.config.js):
+
+   import { defineConfig } from 'vite';
+
+   export default defineConfig({
+     base: '/public/',
+     server: {
+       proxy: {
+         '/api': 'http://localhost:8000',
+       },
+     },
+   });
+
+3. Compilar assets con Vite:
+   npm run dev  # desarrollo
+   npm run build  # producción
+
+# Comandos útiles de Laravel
+
+- Ejecutar migraciones:
+  php artisan migrate
+
+- Crear un nuevo controlador:
+  php artisan make:controller NombreController
+
+- Generar un nuevo modelo:
+  php artisan make:model NombreModelo
+
+- Crear una nueva migración:
+  php artisan make:migration nombre_migracion
+
+- Crear un Seeder (sembrador de datos):
+  php artisan make:seeder NombreSeeder
+
+- Para listar todas las rutas registradas en tu aplicación Laravel:
+  php artisan route:list
+
+- Limpiar Cache de Configuración:
+  php artisan config:cache
+
+- Rollback sin parámetros:
+  php artisan migrate:rollback
+#El parámetro --step te permite especificar cuántas migraciones deseas deshacer. 
+#En el ejemplo anterior (--step=3), deshará las últimas 3 migraciones ejecutadas, siempre y cuando estén en el mismo lote.
+
+- Rollback con --step:
+  php artisan migrate:rollback --step=3
+
+
+# Gestión de paquetes npm para Vue.js y Vite
+
+- Instalar dependencias para Vue.js:
+  npm install vue
+
+- Instalar dependencias para Vite:
+  npm install -g create-vite
+
+# Configuración de webpack y Vite en Laravel
+
+- Editar archivo webpack.mix.js para personalizar la compilación de assets.
+
+- Editar archivo vite.config.js para configurar Vite según las necesidades del proyecto.
+
+# Gestión de versiones y entorno de desarrollo
+
+- Verificar versiones de Node.js y npm:
+  node -v
+  npm -v
+
+- Crear y activar entornos virtuales con npm y Laravel:
+
+  npm run dev
+
+  npm run start
+#packages php ubuntu
+- imagick 
+  sudo apt update
+  sudo apt install php7.4-imagick
+  sudo systemctl restart php7.4-fpm
+
+
+

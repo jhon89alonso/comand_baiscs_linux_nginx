@@ -1,0 +1,28 @@
+Laragon server local 
+https://laragon.org/download/index.html
+-- Edition
+Download Laragon - Full (173 MB)
+
+Laragon Full (64-bit): Apache 2.4, Nginx, MySQL 8, PHP 8, Redis, Memcached, Node.js 18, npm, git
+ tutorial ayuda 
+https://www.youtube.com/watch?v=F4OiPb-sj_A
+
+postgresql
+https://www.postgresql.org/download/
+
+seleccionar la version 15 o 16, sistema operatrivo y descargar 
+tutorial ayuda 
+https://www.youtube.com/watch?v=RgP1njsQO0g
+
+git 
+https://git-scm.com/download/win
+
+node 
+https://nodejs.org/en/download
+
+
+visualstudio code 
+https://code.visualstudio.com/
+
+composer si no instala laragon
+https://getcomposer.org/download/

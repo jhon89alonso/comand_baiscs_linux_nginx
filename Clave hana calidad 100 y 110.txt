@@ -1,0 +1,40 @@
+Clave hana calidad 100 y 110
+Programador2@10337133304
+
+clave Sap s3
+Jaah1033713304_890815
+
+=BUSCARV(C2;exist_eina;1;FALSO)
+
+MM - Registro info de compras con condiciones
+Producto, numeración interna o externa 0002
+
+Tomar valores por defecto para tipo inspección p.exten.prod. 0001
+Tomar valores por defecto para tipo inspección p.producto 0001
+Usar ID producto para integración con sistemas externos 0001
+*/*/*/*
+
+MM - Registro info de compras: Ampliar registro existente
+
+Producto, numeración interna o externa 00002
+Tomar valores por defecto para tipo inspección p.exten.prod. 00001
+Tomar valores por defecto para tipo inspección p.producto 00001
+Usar ID producto para integración con sistemas externos 00001
+
+Grupo_35PUM4D05
+
+Inicial.01$
+Medellin2024*
+Inicio.01$
+
+Buen día, atendiendo su solicitud se agregan permisos a usuario por favor validar las transacciones y si le genera un error sin salir de la transacción ingresar el siguiente código /nsu53 y tomar pantallazo para ver los errores 
+se cierra ticket al no haber retroalimentación del usuario, si no ha sido resuelto su caso por favor crear nuevo
+Buen día se añaden permisos para transacción descrita por usuario
+Buen día, para la gestión de su solicitud necesitamos que tome capturas ingresando a la transacción y haga el procedimiento hasta llegar donde le genera error, a continuación, sin salir de la transacción ingrese el siguiente comando /nsu53 y tome capturas de los errores y nos comparta las capturas o comunicarse por teams con Jhon Anders. Alonso Hernández - Programador.
+
+director.ti@grupoespumados.com
+lider.fi@impsercom.com.co
+lider.planta@espumasdelvalle.com.co
+
+
+
