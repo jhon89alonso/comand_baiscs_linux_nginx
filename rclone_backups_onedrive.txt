@@ -1,0 +1,132 @@
+===============================
+ MANUAL DE SOPORTE - RCLONE
+===============================
+
+🔁 USO: Sincronización de respaldos con OneDrive mediante Rclone
+
+📌 UBICACIÓN DEL ARCHIVO DE CONFIGURACIÓN:
+~/.config/rclone/rclone.conf
+
+⚠️ IMPORTANTE:
+- Este archivo contiene las credenciales (token) de acceso a OneDrive.
+- NO ELIMINAR NI MODIFICAR SIN RESPALDO PREVIO.
+
+-----------------------------------
+🔍 PASOS DE VERIFICACIÓN EN CASO DE FALLA
+-----------------------------------
+
+1. 🧪 Verificar conexión a internet del servidor:
+   Ejecutar:
+       ping 8.8.8.8
+   - Si falla: revisar conexión de red o cableado.
+
+2. 🔑 Verificar validez del archivo rclone.conf:
+   Ejecutar:
+       rclone listremotes
+   - Debería mostrar: `onedrive:`
+   - Si no muestra nada o da error, revisar:
+       ~/.config/rclone/rclone.conf
+
+3. 📁 Verificar acceso al OneDrive:
+   Ejecutar:
+       rclone lsd onedrive:
+   - Si da error de token expirado, ver sección “🔄 Regenerar Token”
+
+4. 💥 Ver errores del último respaldo:
+   Revisar archivo de log (si se usa cron):
+       /var/log/rclone.log
+
+5. 🧰 Probar sincronización manual:
+   Ejecutar:
+       rclone copy /ruta/origen onedrive:carpeta --progress
+
+-----------------------------------
+🔄 REGENERAR TOKEN DE ACCESO (SI EXPIRA)
+-----------------------------------
+
+1. En una máquina con entorno gráfico, ejecutar:
+       rclone config
+
+2. Seleccionar el remote existente (e.g., `onedrive`)
+
+3. Elegir la opción: `Edit this remote`
+
+4. Ir pasando opciones hasta llegar a:
+   - `Use auto config?` → YES
+
+5. Iniciará navegador web para autorizar OneDrive.
+
+6. Una vez completado, se actualizará el archivo `rclone.conf`
+
+7. Copiar el archivo actualizado al servidor:
+       scp ~/.config/rclone/rclone.conf usuario@IP_SERVIDOR:~/.config/rclone/rclone.conf
+
+-----------------------------------
+🔧 RECONFIGURAR DESDE CERO (SI SE PIERDE CONFIGURACIÓN)
+-----------------------------------
+
+1. En una máquina con entorno gráfico (NO el servidor):
+
+   Ejecutar:
+       rclone config
+
+2. Seleccionar:
+   - `n` → New remote
+
+3. Ingresar un nombre (ejemplo):
+   - `onedrive`
+
+4. Seleccionar el tipo de almacenamiento:
+   - Buscar y escribir el número de opción correspondiente a `OneDrive`
+
+5. Luego:
+   - Client ID → Enter (vacío)
+   - Client Secret → Enter (vacío)
+   - Region → 1 (OneDrive Personal) o 2 (Business)
+   - Edit advanced config → No
+   - Use auto config → YES
+
+6. Se abrirá el navegador para autenticarse con Microsoft.
+
+7. Al finalizar, se guarda la configuración en:
+       ~/.config/rclone/rclone.conf
+
+8. Verificar conexión:
+       rclone lsd onedrive:
+
+9. Subir el archivo de configuración al servidor:
+       scp ~/.config/rclone/rclone.conf usuario@IP_SERVIDOR:~/.config/rclone/rclone.conf
+
+-----------------------------------
+🛠 USO FRECUENTE
+-----------------------------------
+
+✅ Subir backups:
+    rclone copy /var/www/copge/sql onedrive:Backups --progress
+
+✅ Sincronizar (modo espejo):
+    rclone sync /var/www/copge/sql onedrive:Backups --progress
+
+✅ Montar OneDrive como carpeta local:
+    mkdir -p ~/OneDrive
+    rclone mount onedrive: ~/OneDrive --daemon
+
+-----------------------------------
+🕒 AUTOMATIZAR CON CRON
+-----------------------------------
+
+Editar tareas programadas:
+    crontab -e
+
+Ejemplo de tarea diaria a las 2am:
+    0 2 * * * /usr/bin/rclone sync /var/www/copge/sql onedrive:Backups --log-file=/var/log/rclone.log
+
+-----------------------------------
+📞 SOPORTE / CONTACTO
+-----------------------------------
+
+Usuario responsable: Jhon Alonso  
+Fecha última revisión: AGOSTO 2025  
+Ubicación del servidor: /var/www/copge/sql
+
+-----------------------------------

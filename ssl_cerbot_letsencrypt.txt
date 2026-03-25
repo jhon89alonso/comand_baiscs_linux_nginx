@@ -1,0 +1,60 @@
+Manual: Solución de problemas para obtener certificado SSL con Let's Encrypt y Nginx
+
+1. Verificar y configurar registros DNS:
+   a) Acceder al panel de control de Cloudflare
+   b) Añadir/verificar registro A para dominio principal (ej: copge.test.co)
+   c) Añadir/verificar registro A para subdominio www (ej: www.copge.test.co)
+   d) Ambos registros deben apuntar a la IP del servidor (ej: 266.94.127.126)
+   e) Esperar propagación DNS (usar dnschecker.org para verificar)
+
+2. Configurar Nginx:
+   a) Editar el archivo de configuración:
+      sudo nano /etc/nginx/sites-available/copge.test.co
+   b) Asegurar que la directiva server_name incluya ambos dominios:
+      server_name copge.test.co www.copge.test.co;
+   c) Guardar cambios y salir del editor
+
+3. Verificar y recargar Nginx:
+   a) Verificar configuración: sudo nginx -t
+   b) Si no hay errores, recargar: sudo systemctl reload nginx
+
+4. Configurar Cloudflare:
+   a) Desactivar temporalmente el proxy (icono de nube gris) para ambos dominios
+   b) Configurar modo SSL/TLS en "Full" o "Full (strict)"
+
+5. Ejecutar Certbot:
+   sudo certbot --nginx --hsts --staple-ocsp --must-staple -d copge.test.co -d www.copge.test.co
+
+6. Si persisten los problemas:
+   a) Verificar firewall: sudo ufw status
+   b) Revisar logs de Nginx: sudo tail -n 50 /var/log/nginx/error.log
+   c) Revisar logs de Certbot: sudo tail -n 60 /var/log/letsencrypt/letsencrypt.log
+
+7. Consideraciones adicionales:
+   a) Usar el plugin DNS de Certbot para Cloudflare si los problemas continúan
+   b) Verificar que no haya reglas de firewall en Cloudflare bloqueando solicitudes
+
+Enlaces para estudio adicional:
+
+1. Documentación oficial de Certbot:
+   https://certbot.eff.org/docs
+
+2. Guía de Nginx para SSL:
+   https://nginx.org/en/docs/http/configuring_https_servers.html
+
+3. Cloudflare y SSL:
+   https://developers.cloudflare.com/ssl/
+
+4. Let's Encrypt - Cómo funciona:
+   https://letsencrypt.org/how-it-works/
+
+5. Troubleshooting común de Certbot:
+   https://certbot.eff.org/faq
+
+6. Guía de Digital Ocean sobre Nginx y Let's Encrypt:
+   https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-20-04
+
+7. Mozilla SSL Configuration Generator:
+   https://ssl-config.mozilla.org/
+
+Recuerda siempre mantener tu sistema y software actualizados, y seguir las mejores prácticas de seguridad al configurar tu servidor web.

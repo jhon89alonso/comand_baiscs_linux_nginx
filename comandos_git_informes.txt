@@ -1,0 +1,117 @@
+📄 Reporte: Manejo de Comandos Git para Métricas de Actividad
+============================================================
+
+🔢 1. Contar la cantidad de commits desde una fecha específica
+---------------------------------------------------------------
+Comando:
+git rev-list --count HEAD --since="2025-01-01" --before="now" > commits.txt
+
+📌 ¿Qué hace?
+Cuenta el número total de commits realizados desde el 1 de enero de 2025 hasta la fecha actual (`now`) en la rama actual.
+
+📁 Salida:
+Guarda el número de commits en el archivo `commits.txt`.
+
+
+📈 2. Obtener estadísticas de líneas modificadas (añadidas y eliminadas)
+------------------------------------------------------------------------
+Comando:
+git log --since="2025-01-01" --before="now" --numstat --pretty=tformat: | awk '{added+=$1; deleted+=$2} END {print "\n--- Estadísticas de Líneas ---\nLíneas añadidas:", added, "\nLíneas eliminadas:", deleted, "\nLíneas totales cambiadas:", added+deleted}' >> reporte_git.txt
+
+📌 ¿Qué hace?
+Suma todas las líneas añadidas y eliminadas en los commits realizados desde el 01/01/2025 hasta ahora.
+
+📁 Salida:
+Agrega un resumen de líneas modificadas al archivo `reporte_git.txt`.
+
+
+📜 3. Listado completo de commits con detalles
+----------------------------------------------
+Comando:
+git log --since="2025-01-01" --before="now" --pretty=medium >> reporte_git.txt
+
+📌 ¿Qué hace?
+Agrega al archivo `reporte_git.txt` un historial detallado de los commits realizados desde el 01/01/2025 hasta hoy, incluyendo:
+- Hash del commit
+- Autor
+- Fecha
+- Mensaje del commit
+
+📁 Salida:
+Se anexa al mismo archivo `reporte_git.txt`.
+
+
+📆 4. Reporte diario de commits y líneas cambiadas por fecha
+-------------------------------------------------------------
+Comando:
+git log --since="2025-01-01" --before="now" --numstat --date=short --pretty=format:"%ad" | awk '
+  /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/ { date=$1; commits[date]++ }
+  /^[0-9]+/ { added[date]+=$1; deleted[date]+=$2 }
+  END {
+    printf "\n📅 Reporte por fecha desde 2025-01-01:\n\n"
+    for (d in commits) {
+      printf "📌 %s - Commits: %d | +%d / -%d | Total: %d\n", d, commits[d], added[d], deleted[d], added[d]+deleted[d]
+    }
+  }
+' | sort > reporte_por_fecha.txt
+
+📌 ¿Qué hace?
+Agrupa los commits por fecha y muestra para cada día:
+- Número de commits
+- Líneas añadidas
+- Líneas eliminadas
+- Total de líneas cambiadas
+
+📁 Salida:
+Guarda el resumen diario en `reporte_por_fecha.txt`.
+
+
+📁 Archivos generados
+======================
+1. commits.txt            → Total de commits desde 2025-01-01
+2. reporte_git.txt        → Estadísticas generales y listado de commits
+3. reporte_por_fecha.txt  → Actividad diaria con commits y líneas cambiadas
+
+nuevos comandos 
+git log \
+  --author="programador2@impsercom.com.co\|jhon2alonso@hotmail.com\|programador2@grupoespumados.com" \
+  --since="2025-07-01" \
+  --before="2025-08-31 23:59:59" \
+  --pretty=oneline | wc -l > commits.txt
+
+git log \
+  --author="programador2@impsercom.com.co\|jhon2alonso@hotmail.com\|programador2@grupoespumados.com" \
+  --since="2025-07-01" \
+  --before="2025-08-31 23:59:59" \
+  --numstat --pretty=tformat: |
+  awk '{added+=$1; deleted+=$2} END {
+    print "\n--- Estadísticas de Líneas ---"
+    print "Líneas añadidas:", added
+    print "Líneas eliminadas:", deleted
+    print "Líneas totales cambiadas:", added+deleted
+  }' > reporte_git.txt
+
+
+git log \
+  --author="programador2@impsercom.com.co\|jhon2alonso@hotmail.com\|programador2@grupoespumados.com" \
+  --since="2025-07-01" \
+  --before="2025-08-31 23:59:59" \
+  --pretty=medium >> reporte_git.txt
+
+git log \
+  --author="programador2@impsercom.com.co\|jhon2alonso@hotmail.com\|programador2@grupoespumados.com" \
+  --since="2025-07-01" \
+  --before="2025-08-31 23:59:59" \
+  --numstat --date=short --pretty=format:"%ad" |
+  awk '
+    /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/ { date=$1; commits[date]++ }
+    /^[0-9]+/ { added[date]+=$1; deleted[date]+=$2 }
+    END {
+      printf "\n📅 Reporte por fecha desde 2025-07-01 hasta 2025-08-31:\n\n"
+      for (d in commits) {
+        printf "📌 %s - Commits: %d | +%d / -%d | Total: %d\n",
+               d, commits[d], added[d], deleted[d], added[d]+deleted[d]
+      }
+    }
+  ' | sort > reporte_por_fecha.txt
+

@@ -1,0 +1,115 @@
+# ================================
+# PowerShell: Gestión de Historial
+# ================================
+
+# --------------------------------
+# VER EL HISTORIAL
+# --------------------------------
+
+# Muestra el historial de comandos de la sesión actual
+Get-History
+
+# Muestra solo los últimos 10 comandos de la sesión actual
+Get-History -Count 10
+
+# Abre el archivo donde se guarda el historial persistente entre sesiones
+notepad "$env:APPDATA\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt"
+
+# Muestra el contenido del historial persistente en consola
+Get-Content "$env:APPDATA\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt"
+
+# Busca comandos que contienen la palabra "git" en el historial de la sesión actual
+Get-History | Where-Object { $_.CommandLine -like "*git*" }
+
+# Busca comandos que contienen la palabra "git" en el archivo de historial
+Select-String -Path "$env:APPDATA\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt" -Pattern "git"
+
+
+# --------------------------------
+# BORRAR EL HISTORIAL
+# --------------------------------
+
+# Borra el historial de la sesión actual (memoria)
+Clear-History
+
+# Vacía el archivo de historial persistente (entre sesiones)
+Set-Content -Path "$env:APPDATA\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt" -Value ""
+
+# Elimina completamente el archivo de historial persistente
+Remove-Item "$env:APPDATA\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt" -Force
+
+
+# --------------------------------
+# BORRAR TODO EL HISTORIAL (SESIÓN + ARCHIVO)
+# --------------------------------
+
+# Ejecuta ambos comandos para limpiar completamente el historial de PowerShell
+Clear-History
+Remove-Item "$env:APPDATA\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt" -Force -ErrorAction SilentlyContinue
+
+
+# --------------------------------
+# DESACTIVAR GUARDADO DE HISTORIAL (OPCIONAL)
+# --------------------------------
+
+# Abre el perfil de PowerShell para editarlo
+notepad $PROFILE
+
+# Agrega esta línea para evitar que se cargue el módulo PSReadLine (desactiva historial, pero también autocompletado)
+Remove-Module PSReadLine
+
+# ================================
+# Git Bash: Gestión de Historial
+# ================================
+
+# --------------------------------
+# VER EL HISTORIAL
+# --------------------------------
+
+# Muestra el historial de comandos de la sesión actual
+history
+
+# Muestra solo los últimos 10 comandos ejecutados
+history | tail -n 10
+
+# Buscar un comando que contenga una palabra específica, como "git"
+history | grep git
+
+
+# --------------------------------
+# BORRAR EL HISTORIAL
+# --------------------------------
+
+# Borra el archivo de historial permanentemente
+rm ~/.bash_history
+
+# Vacía el archivo de historial (deja el archivo vacío pero sin eliminarlo)
+> ~/.bash_history
+
+# Borra el historial de la sesión actual (de la memoria)
+history -c
+
+# Borra el historial de la sesión actual y también vacía el archivo en disco
+history -c
+> ~/.bash_history
+
+
+# --------------------------------
+# BORRAR TODO EL HISTORIAL (SESIÓN + ARCHIVO)
+# --------------------------------
+
+# Ejecuta ambos comandos para limpiar completamente el historial de Git Bash
+history -c
+rm ~/.bash_history
+
+
+# --------------------------------
+# UBICACIÓN DEL ARCHIVO DE HISTORIAL (en Windows)
+# --------------------------------
+
+# En Windows, el historial de Git Bash se guarda normalmente en:
+C:\Users\<tu-usuario>\.bash_history
+
+# Puedes abrirlo con cualquier editor de texto (por ejemplo, Notepad)
+
+

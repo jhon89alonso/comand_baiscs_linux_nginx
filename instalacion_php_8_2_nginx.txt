@@ -1,0 +1,85 @@
+
+Instalación de PHP 8.2 con Nginx:
+
+1. **Instalar PHP 8.2**:
+   Para instalar PHP 8.2 en Ubuntu, use el siguiente comando:
+   ```
+   sudo apt update
+   sudo apt install php8.2 php8.2-fpm php8.2-mysql php8.2-xml php8.2-mbstring php8.2-curl php8.2-gd php8.2-cli php8.2-json php8.2-zip
+   ```
+
+2. **Verificar la instalación**:
+   Verifique que PHP 8.2 esté correctamente instalado con:
+   ```
+   php -v
+   ```
+
+   Salida esperada:
+   ```
+   PHP 8.2.x (cli) (built: Dec 24 2024 06:29:37) (NTS)
+   ```
+
+3. **Configurar Nginx para usar PHP 8.2**:
+   Edite el archivo de configuración de Nginx para que apunte a PHP 8.2-FPM:
+   ```
+   sudo nano /etc/nginx/sites-available/tu-sitio
+   ```
+
+   Asegúrese de tener la siguiente línea:
+   ```
+   fastcgi_pass unix:/run/php/php8.2-fpm.sock;
+   ```
+
+4. **Reiniciar servicios**:
+   Reinicie Nginx y PHP 8.2-FPM:
+   ```
+   sudo systemctl restart nginx
+   sudo systemctl restart php8.2-fpm
+   ```
+
+Problemas encontrados durante la instalación:
+
+1. **Falta de extensión GD**:
+   Durante la instalación, se presentó el siguiente error:
+   ```
+   PHP Warning: require(/var/www/copge/public/../vendor/autoload.php): failed to open stream: No such file or directory in /var/www/copge/public/index.php on line 34
+   PHP Fatal error: require(): Failed opening required '/var/www/copge/public/../vendor/autoload.php'
+   ```
+
+   Solución: Se debe instalar la extensión GD y ejecutar `composer install` para generar el archivo `autoload.php`:
+   ```
+   sudo apt install php8.2-gd
+   composer install
+   ```
+
+2. **Falta de dependencias de PHP 8.2**:
+   Se presentó un error de dependencia que indicaba que faltaba la extensión GD:
+   ```
+   phpoffice/phpspreadsheet 1.21.0 requires ext-gd * -> it is missing from your system.
+   ```
+
+   Solución: Instalar la extensión GD para que `phpoffice/phpspreadsheet` y otros paquetes funcionen correctamente:
+   ```
+   sudo apt install php8.2-gd
+   ```
+
+3. **Errores con `fastcgi_pass`**:
+   Se intentó ejecutar el comando `fastcgi_pass` directamente en la terminal, lo cual no es correcto ya que es una directiva de configuración para Nginx, no un comando ejecutable en la terminal. La solución fue agregar la línea correspondiente dentro del archivo de configuración de Nginx:
+   ```
+   fastcgi_pass unix:/run/php/php8.2-fpm.sock;
+   ```
+
+4. **Problemas con Nginx y PHP-FPM**:
+   En algunos casos, hubo problemas al cambiar de PHP 8.2 a PHP 7.4 debido a la configuración de Nginx y PHP-FPM. La solución fue reiniciar los servicios de Nginx y PHP-FPM y verificar que la configuración de Nginx apunte al socket correcto de PHP-FPM.
+
+   Comandos para reiniciar los servicios:
+   ```
+   sudo systemctl restart nginx
+   sudo systemctl restart php8.2-fpm
+   ```
+
+Resumen:
+- Se instalaron PHP 8.2 y las extensiones necesarias.
+- Se configuró Nginx para usar PHP 8.2-FPM.
+- Se resolvieron los problemas relacionados con la falta de extensiones (GD) y las dependencias.
+- Hubo un error de configuración con `fastcgi_pass`, que se corrigió editando los archivos de configuración de Nginx.

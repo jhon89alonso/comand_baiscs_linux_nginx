@@ -1,0 +1,38 @@
+cmd wmic bios get serialnumber
+Te mostraré varios comandos que puedes usar en el CMD (Command Prompt) como administrador para reiniciar los drivers de WiFi en Windows 11:
+
+Abre CMD como administrador (clic derecho > Ejecutar como administrador)
+Ejecuta estos comandos en orden:
+
+netsh winsock reset
+netsh int ip reset
+ipconfig /release
+ipconfig /renew
+ipconfig /flushdns
+
+Luego, para reiniciar específicamente el adaptador de red:
+netsh interface set interface "Wi-Fi" disable
+netsh interface set interface "Wi-Fi" enable
+
+Nota: Si "Wi-Fi" no funciona, reemplázalo con el nombre exacto de tu adaptador que puedes encontrar en:
+
+netsh interface show interface
+
+También puedes usar este comando para reiniciar todos los servicios de red:
+net stop wlansvc && net start wlansvc
+
+# Para restablecer la configuración de red LAN en Windows mediante CMD:
+
+ - Comandos de restablecimiento:
+	netsh winsock reset
+	netsh int ip reset
+	ipconfig /release
+	ipconfig /renew
+	ipconfig /flushdns
+ - Reiniciar servicios de red:
+	net stop winmgmt
+	net start winmgmt
+	net stop wlansvc
+	net start wlansvc
+ - Verificar adaptadores:
+	netsh interface show interface
