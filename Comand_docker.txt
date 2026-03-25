@@ -1,0 +1,75 @@
+RESUMEN DE DOCKER PARA WINDOWS (WSL 2) - JHON ALONSO
+
+INSTALACION Y REQUISITOS
+
+Motor: WSL 2 (Subsistema de Windows para Linux).
+
+Comando para instalar/actualizar en PowerShell:
+wsl --install
+wsl --update
+
+Docker Desktop: Descargar de la web oficial.
+
+IMPORTANTE: En la instalacion marcar "Use WSL 2 instead of Hyper-V".
+
+En Settings > Resources > WSL Integration: Activar Ubuntu.
+
+CREACION DEL PROYECTO (Terminal Ubuntu)
+
+Crear carpeta: mkdir mi-proyecto && cd mi-proyecto
+
+Crear archivo: code docker-compose.yml
+
+Contenido basico del archivo YAML:
+
+services:
+db:
+image: mysql:8.0
+container_name: mi-servidor-mysql
+environment:
+MYSQL_ROOT_PASSWORD: password123
+MYSQL_DATABASE: prueba_docker
+ports:
+- "3307:3306"
+volumes:
+- ./datos_mysql:/var/lib/mysql
+
+COMANDOS DE GESTION (Ejecutar en la carpeta del proyecto)
+
+Levantar: docker compose up -d
+
+Ver estado: docker ps
+
+Detener: docker compose stop
+
+Borrar contenedores: docker compose down
+
+Ver logs (errores): docker compose logs -f
+
+CONEXION DESDE SQL (DataGrip, Workbench, HeidiSQL)
+
+Host: localhost
+
+Port: 3307 (el que pusiste a la izquierda en el YAML)
+
+User: root
+
+Pass: password123
+
+IMPORTAR DUMP SQL AL CONTENEDOR
+
+Comando desde terminal Ubuntu (ajustar ruta):
+docker exec -i mi-servidor-mysql mysql -u root -ppassword123 prueba_docker < "/mnt/c/Users/PROGRAMADOR2/Downloads/archivo.sql"
+
+MANTENIMIENTO Y LIMPIEZA
+
+Espacio ocupado: docker system df
+
+Limpieza total: docker system prune -a
+
+Entrar a la terminal del contenedor:
+docker exec -it mi-servidor-mysql bash
+
+Limitar RAM de WSL (Archivo .wslconfig en C:\Users\Usuario):
+[wsl2]
+memory=4GB

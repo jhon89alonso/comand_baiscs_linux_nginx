@@ -1,0 +1,49 @@
+Errores al desplegar error 502 Bad Gateway
+
+- Verifique la configuración de nginx : asegúrese de que la configuración de nginx ( /etc/nginx/sites-available/your-site.conf) esté configurada correctamente. Preste atención a la server_name directiva para asegurarse de que coincida con su dominio ( grupoespumados.co).
+
+- Reiniciar nginx : sudo systemctl restart nginx
+
+- Compruebe la configuración de PHP-FPM : si su sitio utiliza PHP, asegúrese de que PHP-FPM se esté ejecutando y configurado correctamente. Revise sus registros ( /var/log/php-fpm.log) 
+
+
+# Error en puerto 80 
+- Verifica el estado del servicio Nginx
+	systemctl status nginx.service
+
+- Consulta el registro del sistema
+	journalctl -xeu nginx.service
+
+- Puertos en conflicto: Asegúrate de que el puerto 80 o 443 no esté siendo utilizado por otro servicio. Verifica con:
+	sudo netstat -tuln | grep :80
+
+- Comprueba la configuración de Nginx
+	nginx -t
+
+- Confirma que Nginx está escuchando en el puerto 80
+	sudo netstat -tuln | grep :80
+
+- Identifica el proceso que está usando el puerto 80
+	sudo lsof -i :80
+
+-  Detén el proceso en conflicto
+	sudo kill -9 <PID>
+- Si el proceso está asociado con un servicio (por ejemplo, Apache), deshabilítalo y detenlo:
+	sudo systemctl stop apache2
+	sudo systemctl disable apache2
+
+- Verifica que el puerto 80 esté libre
+	sudo netstat -tuln | grep :80
+
+- Reinicia Nginx
+
+- Confirma que Nginx está corriendo
+	sudo netstat -tuln | grep :80
+
+
+
+
+
+
+
+

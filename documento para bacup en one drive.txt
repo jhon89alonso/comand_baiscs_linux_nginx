@@ -1,0 +1,114 @@
+=========================================
+ MANUAL DE RESPALDO AUTOMÁTICO CON RCLONE
+=========================================
+
+Este documento detalla los pasos para instalar y configurar Rclone, modificar el script de respaldo MySQL y automatizarlo con un cronjob en Linux. También se explica cómo usar Rclone en Windows sin configurar variables de entorno.
+
+-----------------------------------------------------
+ 1. Instalación y Configuración de Rclone
+-----------------------------------------------------
+
+**En Linux:**
+1. Descargar e instalar Rclone:
+   ```bash
+   sudo apt install rclone -y
+   ```
+2. Configurar Rclone para OneDrive:
+   ```bash
+   rclone config
+   ```
+   - Elegir "New remote" y nombrarlo "onedrive".
+   - Seleccionar "OneDrive Personal o Business".
+   - Autenticar con la cuenta de Microsoft.
+   - Seleccionar la unidad de almacenamiento.
+
+**En Windows:**
+1. Descargar Rclone desde su [sitio oficial](https://rclone.org/downloads/).
+2. Extraer el contenido en una carpeta (ejemplo: `C:\rclone\`).
+3. Para configurarlo, usar en PowerShell o CMD:
+   ```powershell
+   .\rclone.exe authorize "onedrive"
+   ```
+
+-----------------------------------------------------
+ 2. Creación del Script mysql_backup.sh
+-----------------------------------------------------
+
+Crear el script `mysql_backup.sh` en `/usr/local/bin/`:
+```bash
+#!/bin/bash
+
+# Configuración
+BACKUP_DIR="/home/usuario/backups"
+DB_NAME="nombre_base_datos"
+DB_USER="usuario_mysql"
+DB_PASS="password_mysql"
+DATE=$(date +"%Y_%m_%d_%H_%M")
+BACKUP_FILE="$BACKUP_DIR/backup_$DATE.sql"
+ZIP_FILE="$BACKUP_DIR/backup_$DATE.tar.gz"
+REMOTE_PATH="onedrive:/Backups/"
+
+# Crear respaldo
+mysqldump -u $DB_USER -p$DB_PASS $DB_NAME > $BACKUP_FILE
+
+# Comprimir archivo
+tar -czvf $ZIP_FILE $BACKUP_FILE
+
+# Subir a OneDrive
+rclone copy $ZIP_FILE $REMOTE_PATH
+
+# Eliminar archivos locales
+rm $BACKUP_FILE $ZIP_FILE
+```
+
+Asignar permisos de ejecución:
+```bash
+chmod +x /usr/local/bin/mysql_backup.sh
+```
+
+-----------------------------------------------------
+ 3. Automatización con Cronjob
+-----------------------------------------------------
+
+Para ejecutar el respaldo automáticamente, agregar una tarea cron:
+```bash
+crontab -e
+
+*ver lista de trabajos cron 
+crontab -l
+
+** ver como trabaja el conjob
+tail -f /dir/del/proyecto/sql/backup.log
+
+```
+Agregar la siguiente línea para ejecutar el respaldo todos los días a las 2:00 AM:
+```bash
+0 2 * * * /usr/local/bin/mysql_backup.sh
+```
+
+-----------------------------------------------------
+ 4. Verificación de la Subida a OneDrive
+-----------------------------------------------------
+
+Para comprobar que el archivo se ha subido correctamente, usar:
+```bash
+rclone ls onedrive:/Backups/
+```
+Esto listará los archivos en la carpeta de respaldo en OneDrive.
+
+-----------------------------------------------------
+ 5. Consideraciones Finales
+-----------------------------------------------------
+
+- En Windows, cada vez que se use `rclone.exe`, debe ejecutarse desde su directorio.
+- En Linux, asegurarse de que `rclone` está instalado y configurado correctamente.
+- Probar el script manualmente antes de agregarlo al cronjob:
+  ```bash
+  /usr/local/bin/mysql_backup.sh
+  ```
+- Se recomienda revisar los respaldos periódicamente para garantizar su integridad.
+
+=========================================
+ FIN DEL MANUAL
+=========================================
+

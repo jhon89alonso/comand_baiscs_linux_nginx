@@ -1,0 +1,240 @@
+Resumen de instalación y configuración de Caddy para Laravel (HTTP en puerto 8080)
+
+1. Instalación de Caddy en Ubuntu:
+
+   - Se añadió el repositorio oficial de Caddy:
+     curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/deb/debian/setup.deb.sh' | sudo bash
+
+   - Se instaló Caddy:
+     sudo apt install caddy
+
+   - Verificación del servicio:
+     sudo systemctl status caddy
+
+2. Configuración inicial del Caddyfile:
+
+   Ruta del archivo de configuración: /etc/caddy/Caddyfile
+
+   Contenido inicial para servir Laravel en HTTP en puerto 8080:
+
+   http://:8080 {
+       root * /home/e-ub-serub/Proyectos/cpge/public
+       php_fastcgi unix//run/php/php8.1-fpm.sock
+       file_server
+   }
+
+   Explicación:
+   - `http://:8080` : Caddy escucha en todos los interfaces de red en el puerto 8080.
+   - `root * /home/e-ub-serub/Proyectos/cpge/public` : Define la carpeta pública de Laravel como raíz del sitio.
+   - `php_fastcgi unix//run/php/php8.1-fpm.sock` : Conecta con PHP-FPM para procesar archivos PHP.
+   - `file_server` : Habilita el servidor de archivos para servir contenido estático (CSS, JS, imágenes).
+
+3. Permisos:
+
+   - Se otorgó acceso al usuario de Caddy al proyecto Laravel:
+     sudo chown -R e-ub-serub:caddy /home/e-ub-serub/Proyectos/cpge
+     sudo chmod -R 755 /home/e-ub-serub/Proyectos/cpge/public
+
+4. Reinicio del servicio:
+
+   - Para aplicar la configuración:
+     sudo systemctl restart caddy
+
+   - Verificación de que está corriendo:
+     sudo systemctl status caddy
+
+5. Acceso:
+
+   - Desde cualquier equipo de la LAN:
+     http://192.168.168.154:8080
+
+Notas:
+
+- Esta configuración inicial es solo HTTP y funciona para pruebas en LAN.
+- No incluye HTTPS; para habilitar HTTPS interno (con certificados autofirmados de Caddy), se puede cambiar a `https://192.168.168.154:8080 { ... tls internal }`.
+- No es necesario tocar `auto_https` ni otros parámetros globales.
+
+** Resumen Solución Error de Permisos Laravel - Logs
+
+Problema
+Error al acceder a http://192.168.168.154:8080/login:
+"The stream or file "/home/e-ub-serub/Proyectos/cpge/storage/logs/laravel-2025-11-19.log" could not be opened in append mode: Failed to open stream: Permission denied"
+
+Causa
+PHP-FPM ejecutándose como usuario www-data intentando escribir en archivos propiedad de e-ub-serub:caddy
+
+Solución Aplicada
+
+1. Detener servicios
+sudo systemctl stop caddy
+
+2. Verificar procesos en ejecución
+ps aux | grep -E '(caddy|php|fpm)'
+
+3. Corregir permisos de archivos
+# Cambiar propietario y grupo
+sudo chown -R e-ub-serub:www-data /home/e-ub-serub/Proyectos/cpge/storage
+sudo chown -R e-ub-serub:www-data /home/e-ub-serub/Proyectos/cpge/bootstrap/cache
+
+# Establecer permisos adecuados
+sudo chmod -R 775 /home/e-ub-serub/Proyectos/cpge/storage
+sudo chmod -R 775 /home/e-ub-serub/Proyectos/cpge/bootstrap/cache
+
+4. Configurar grupos de usuario
+# Agregar usuario al grupo www-data
+sudo usermod -a -G www-data e-ub-serub
+
+5. Reiniciar servicios
+# Reiniciar PHP-FPM (todas las versiones)
+sudo systemctl restart php8.0-fpm
+sudo systemctl restart php8.1-fpm
+sudo systemctl restart php8.2-fpm
+
+# Iniciar Caddy
+sudo systemctl start caddy
+
+Comandos Adicionales Útiles
+
+Limpiar cache Laravel
+php artisan cache:clear
+php artisan config:clear
+php artisan view:clear
+php artisan optimize:clear
+
+Verificar permisos
+ls -la /home/e-ub-serub/Proyectos/cpge/storage/logs/
+
+Verificar grupos de usuario
+groups e-ub-serub
+
+Notas Importantes
+- Usuario PHP-FPM: www-data
+- Usuario aplicación: e-ub-serub
+- Grupo compartido: www-data
+- Permisos recomendados: 775 para directorios de escritura
+
+Estructura de Permisos Correcta
+storage/ y bootstrap/cache/
+- Propietario: e-ub-serub
+- Grupo: www-data
+- Permisos: 775 (rwxrwxr-x)
+
+#caddy stl
+Resumen de Configuración - Caddy Server con Laravel
+===================================================
+
+FECHA: 2025-11-20
+SERVIDOR: 192.168.168.154
+APLICACIÓN: Laravel en /home/e-ub-serub/Proyectos/cpge
+
+CREACIÓN DE CERTIFICADOS TLS
+----------------------------
+
+# Crear directorio para certificados (si no existe)
+sudo mkdir -p /etc/caddy/certificates
+
+# Generar clave privada de la CA local
+sudo openssl genrsa -out /etc/caddy/certificates/my-local-ca.key 2048
+
+# Generar certificado de la CA local
+sudo openssl req -x509 -new -nodes -key /etc/caddy/certificates/my-local-ca.key -sha256 -days 825 -out /etc/caddy/certificates/my-local-ca.crt -subj "/C=US/ST=State/L=City/O=Organization/CN=My Local CA"
+
+# Generar clave privada del servidor
+sudo openssl genrsa -out /etc/caddy/certificates/192.168.168.154.key 2048
+
+# Generar solicitud de certificado (CSR)
+sudo openssl req -new -key /etc/caddy/certificates/192.168.168.154.key -out /etc/caddy/certificates/192.168.168.154.csr -subj "/C=US/ST=State/L=City/O=Organization/CN=192.168.168.154"
+
+# Crear archivo de configuración de extensiones
+sudo nano /etc/caddy/certificates/192.168.168.154.ext
+
+Contenido del archivo .ext:
+authorityKeyIdentifier=keyid,issuer
+basicConstraints=CA:FALSE
+keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+subjectAltName = @alt_names
+
+[alt_names]
+IP.1 = 192.168.168.154
+DNS.1 = localhost
+DNS.2 = 127.0.0.1
+
+# Generar certificado final firmado por la CA
+sudo openssl x509 -req -in /etc/caddy/certificates/192.168.168.154.csr -CA /etc/caddy/certificates/my-local-ca.crt -CAkey /etc/caddy/certificates/my-local-ca.key -CAcreateserial -out /etc/caddy/certificates/192.168.168.154.crt -days 365 -sha256 -extfile /etc/caddy/certificates/192.168.168.154.ext
+
+# Ajustar permisos de los certificados
+sudo chown caddy:caddy /etc/caddy/certificates/192.168.168.154.*
+sudo chmod 644 /etc/caddy/certificates/192.168.168.154.crt
+sudo chmod 600 /etc/caddy/certificates/192.168.168.154.key
+
+COMANDOS ADICIONALES EJECUTADOS
+-------------------------------
+
+# Limpieza de cache de Laravel
+php artisan optimize:clear
+
+# Verificación de puertos y procesos de Caddy
+sudo lsof -i -P -n | grep caddy
+
+CONFIGURACIÓN CADDYFILE
+-----------------------
+
+Ubicación: /etc/caddy/Caddyfile
+
+Configuración Global:
+{
+  auto_https disable_redirects
+}
+
+Servidor HTTPS (Puerto 443):
+- Dirección: https://192.168.168.154:443
+- Certificado TLS: /etc/caddy/certificates/192.168.168.154.crt
+- Clave privada: /etc/caddy/certificates/192.168.168.154.key
+- Raíz: /home/e-ub-serub/Proyectos/cpge/public
+- PHP-FPM con socket Unix (PHP 8.1)
+- Compresión GZIP habilitada
+- File server y logging
+
+Servidor HTTP (Puerto 8080):
+- Dirección: http://192.168.168.154:8080
+- Misma configuración que HTTPS pero sin TLS
+
+ARCHIVOS GENERADOS EN /etc/caddy/certificates/
+----------------------------------------------
+- my-local-ca.key          (Clave privada de la CA)
+- my-local-ca.crt          (Certificado de la CA)
+- 192.168.168.154.key      (Clave privada del servidor)
+- 192.168.168.154.csr      (Solicitud de certificado)
+- 192.168.168.154.ext      (Configuración de extensiones)
+- 192.168.168.154.crt      (Certificado final del servidor)
+- my-local-ca.srl          (Número de serie generado)
+
+FUNCIONALIDADES HABILITADAS
+---------------------------
+
+✅ Servicio HTTP en puerto 8080
+✅ Servicio HTTPS en puerto 443 con certificado propio
+✅ Certificado TLS autofirmado para desarrollo
+✅ Procesamiento PHP via PHP-FPM 8.1
+✅ Compresión de contenido
+✅ Servidor de archivos estáticos
+✅ Logging de acceso
+✅ Cache de Laravel optimizada
+
+NOTAS TÉCNICAS
+--------------
+
+- Certificados generados con validez de 365 días
+- Certificado incluye IP 192.168.168.154 y localhost
+- Se utiliza una CA local para firmar el certificado del servidor
+- Socket PHP-FPM: unix//run/php/php8.1-fpm.sock
+- Configuración preparada para acceso a cámara vía HTTPS
+
+ESTADO ACTUAL
+-------------
+
+Todos los servicios funcionando correctamente:
+- Caddy escuchando en puertos 443 (HTTPS) y 8080 (HTTP)
+- Certificados TLS configurados y funcionando
+- Laravel con cache optimizada
+- Aplicación accesible desde red local vía HTTPS

@@ -1,0 +1,506 @@
+INFORME INSTALACION Y CONFIGURACION CUPS
+Fecha: 20 Noviembre 2025
+Servidor: VPS 66.94.127.124
+Usuario: jhondev
+RESUMEN EJECUTIVO
+Instalacion exitosa de CUPS (Common UNIX Printing System) en servidor VPS para gestion de impresion remota e integracion con impresora Brother local via VPN.
+
+ESPECIFICACIONES SERVIDOR
+Servidor: VPS Contabo
+
+IP Publica: 66.94.127.124
+
+Sistema: Linux
+
+Usuario: jhondev
+
+Proyecto: COPGE (Laravel) en /var/www/copge
+
+PASOS REALIZADOS
+1. INSTALACION CUPS
+sudo apt update
+sudo apt install cups cups-client cups-bsd printer-driver-all -y
+
+2. CONFIGURACION PERMISOS USUARIOS
+sudo usermod -a -G lpadmin jhondev
+sudo usermod -a -G lpadmin www-data
+sudo usermod -a -G lp www-data
+
+3. CONFIGURACION FIREWALL
+sudo ufw allow 631/tcp
+Estado: Puerto 631 abierto para acceso remoto
+
+4. CONFIGURACION ARCHIVO CUPSD.CONF
+Archivo: /etc/cups/cupsd.conf
+
+Modificaciones principales:
+
+Listen 0.0.0.0:631 (escuchar todas interfaces)
+
+WebInterface Yes (habilitado)
+
+Acceso para redes VPN:
+
+Allow 172.16.1.0/24 (Red VPN)
+
+Allow 192.168.168.0/24 (Red impresora local)
+
+5. CONFIGURACION VPN
+Servidor VPN: 190.145.76.28:443
+
+Usuario: jalonso
+
+Tunnel activo: ppp0 con IP 172.16.1.101
+
+Conectividad confirmada con impresora 192.168.168.234
+
+6. GESTION SERVICIO CUPS
+sudo systemctl start cups
+sudo systemctl enable cups
+sudo systemctl restart cups
+Estado actual: Active (running)
+
+ACCESO WEB CONFIGURADO
+URL Administracion: http://66.94.127.124:631
+
+Caracteristicas interfaz web:
+
+Administration - Gestion completa impresoras
+
+Printers - Visualizacion y control colas
+
+Jobs - Monitoreo trabajos impresion
+
+Adding Printers - Agregar nuevas impresoras
+
+CONFIGURACION IMPRESORA
+Impresora objetivo:
+
+Marca: Brother
+
+IP Local: 192.168.168.234
+
+Puerto: 9100 (AppSocket/HP JetDirect)
+
+Protocolo: socket://192.168.168.234:9100
+
+Metodos configuracion disponibles:
+
+Interfaz Web: http://66.94.127.124:631/admin -> "Add Printer"
+
+Linea comandos:
+sudo lpadmin -p Brother-Local -E -v socket://192.168.168.234:9100 -m raw
+
+INTEGRACION LARAVEL
+Configuracion permisos aplicacion:
+sudo chown -R jhondev:www-data /var/www/copge
+sudo chmod -R 775 storage/ bootstrap/cache/
+
+Comando prueba en Laravel:
+echo "Test contenido" | lp -d Brother-Local
+
+VERIFICACIONES REALIZADAS
+Conectividad Red:
+
+Ping a 192.168.168.234: FUNCIONANDO (111-122ms)
+
+Puerto 631 escuchando: FUNCIONANDO (0.0.0.0:631)
+
+Firewall configurado: FUNCIONANDO (Puerto 631/tcp permitido)
+
+Servicio CUPS:
+
+Servicio activo: FUNCIONANDO
+
+Web Interface habilitado: FUNCIONANDO
+
+Autenticacion configurada: FUNCIONANDO (Usuario jhondev con privilegios)
+
+Acceso Web:
+
+Acceso a http://66.94.127.124:631: FUNCIONANDO
+
+Panel Administracion: FUNCIONANDO
+
+Agregar impresoras: INTERFAZ DISPONIBLE
+
+PROXIMOS PASOS RECOMENDADOS
+Inmediatos:
+
+Agregar impresora Brother desde interfaz web o linea comandos
+
+Probar impresion de pagina de prueba
+
+Configurar como predeterminada si necesario
+
+Para Produccion:
+
+Implementar script impresion en Laravel
+
+Configurar colas impresion asincronas
+
+Monitorear logs CUPS regularmente
+
+Backup configuracion impresoras
+
+ESTADO FINAL
+COMPONENTE - ESTADO - OBSERVACIONES
+CUPS Instalado - OK - Version estable
+Servicio Activo - OK - Sin errores
+Firewall Configurado - OK - Puerto 631 abierto
+Acceso Web - OK - Admin accesible
+Conectividad VPN - OK - Tunnel estable
+Conectividad Impresora - OK - Ping exitoso
+Integracion Laravel - PENDIENTE - Pendiente pruebas
+
+CONSIDERACIONES SEGURIDAD
+Acceso restringido a redes especificas (VPN + local)
+
+Autenticacion requerida para administracion
+
+Puerto no estandar (631) reduce exposicion
+
+Usuarios especificos con privilegios controlados
+
+COMANDOS UTILES
+Ver estado impresoras:
+lpstat -p -d
+
+Probar impresion:
+echo "Test" | lp -d Brother-Local
+
+Ver cola impresion:
+lpq
+
+Ver logs CUPS:
+sudo tail -f /var/log/cups/error_log
+
+Agregar impresora:
+sudo lpadmin -p Brother-Local -E -v socket://192.168.168.234:9100 -m raw
+
+CONTACTOS
+Responsable: jhondev
+Proxima Revision: Recomendada en 30 dias
+
+--- FIN DEL INFORME ---
+
+This response is AI-generated, for reference only.
+
+-- VERSIÓN AGREGAR POR CONSOLA 2
+RESUMEN DE PROCEDIMIENTO PARA CONECTAR CUALQUIER IMPRESORA EN RED MEDIANTE CUPS (HP, ZEBRA, PANTUM, ETC.)
+
+Verificar conectividad con la impresora
+Se comprueba que la dirección IP responde correctamente:
+ping IP-ADDRESS
+Ejemplo:
+ping 192.168.169.5
+
+Enviar una prueba inicial de impresión (opcional, si ya existe una impresora configurada)
+echo "^XA^FO50,50^A0N,60,60^FDTEST ZEBRA OK^FS^XZ" | lp -d NOMBRE_IMPRESORA
+
+Revisar el estado general de CUPS
+lpstat -t
+
+Revisar trabajos pendientes o atascados
+lpstat -o
+
+Revisar el log de CUPS para identificar errores de filtros, drivers o backend
+sudo tail -n 50 /var/log/cups/error_log
+
+Si la impresora ya está configurada pero no imprime, eliminar la cola actual
+sudo lpadmin -x NOMBRE_IMPRESORA
+
+Crear nuevamente la impresora usando protocolo socket (Puerto 9100)
+Este procedimiento funciona para la mayoría de impresoras de red:
+sudo lpadmin -p NOMBRE_IMPRESORA -E -v socket://IP-DE-LA-IMPRESORA:9100 -m raw
+Nota: el modelo "raw" evita que CUPS modifique los datos enviados, permitiendo compatibilidad con impresoras de etiquetas (Zebra), impresoras térmicas y modelos que trabajan con su propio lenguaje (ZPL, EPL, ESC/POS, PCL, etc.).
+
+Enviar prueba de impresión en modo RAW
+echo "^XA^FO50,50^A0N,60,60^FDRUN RAW OK^FS^XZ" | lp -d NOMBRE_IMPRESORA -o raw
+Para impresoras normales (HP, Pantum, Epson), se puede usar un texto simple:
+echo "TEST DE IMPRESIÓN" | lp -d NOMBRE_IMPRESORA -o raw
+
+Confirmar que la impresora imprime correctamente
+Revisar nuevamente el estado:
+lpstat -t
+
+NOTAS GENERALES:
+
+El puerto estándar para impresión por red es el 9100 (Protocolo JetDirect / RAW).
+
+El modo "raw" es el más compatible y evita problemas con drivers incorrectos.
+
+Si la impresora requiere un driver específico (normalmente HP, Epson, etc.), se puede instalar desde CUPS con el modelo adecuado, pero si presenta fallos siempre se puede volver al modo RAW.
+
+Revisar siempre el archivo /var/log/cups/error_log si hay problemas.
+
+Este procedimiento es válido para impresoras láser, térmicas, de etiquetas y multifuncionales, siempre que admitan impresión por red.
+================================================================================
+ADICIÓN AL INFORME - CONFIGURACIÓN DE RUTAS VPN PARA ACCESO A IMPRESORAS
+================================================================================
+
+Fecha Actualización: 26 Noviembre 2025
+Tema: Configuración automática de rutas VPN para segmento de red 192.168.169.0/24
+
+================================================================================
+CONTEXTO DEL PROBLEMA
+================================================================================
+
+Durante la configuración de la impresora Zebra (IP: 192.168.169.5), se detectó 
+que el túnel VPN OpenFortiVPN no recibía automáticamente todas las rutas 
+necesarias desde el servidor FortiGate. Específicamente:
+
+- Red configurada automáticamente: 192.168.168.0/24 ✓
+- Red faltante: 192.168.169.0/24 ✗
+- Ruta parcial recibida: 192.168.169.34/31 (solo 2 IPs)
+
+Síntoma: Imposibilidad de hacer ping o conectar al puerto 9100 de la impresora 
+192.168.169.5
+
+================================================================================
+DIAGNÓSTICO REALIZADO
+================================================================================
+
+Verificación de conectividad VPN:
+
+sudo systemctl status openfortivpn.service
+ip route | grep 192.168.169
+ping 192.168.169.5
+nc -vz 192.168.169.5 9100
+
+Resultado: El túnel VPN (ppp0) estaba activo pero sin ruta completa al 
+segmento 192.168.169.0/24
+
+================================================================================
+SOLUCIÓN IMPLEMENTADA
+================================================================================
+
+--------------------------------------------------------------------------------
+1. CREACIÓN DE SCRIPT DE RUTAS AUTOMÁTICAS
+--------------------------------------------------------------------------------
+
+Archivo: /etc/openfortivpn/route-up.sh
+
+Contenido:
+----------
+#!/bin/bash
+# Esperar a que la interfaz esté completamente lista
+sleep 5
+
+# Verificar que ppp0 existe
+if ip link show ppp0 &> /dev/null; then
+    # Agregar la ruta
+    /sbin/ip route add 192.168.169.0/24 dev ppp0 2>/dev/null || true
+    # Log para debugging
+    echo "$(date): Ruta agregada" >> /var/log/openfortivpn-routes.log
+    /sbin/ip route | grep 192.168.169 >> /var/log/openfortivpn-routes.log
+else
+    echo "$(date): ERROR - ppp0 no existe" >> /var/log/openfortivpn-routes.log
+fi
+----------
+
+Permisos aplicados:
+
+sudo chmod +x /etc/openfortivpn/route-up.sh
+sudo touch /var/log/openfortivpn-routes.log
+sudo chmod 666 /var/log/openfortivpn-routes.log
+
+--------------------------------------------------------------------------------
+2. CONFIGURACIÓN DEL ARCHIVO OPENFORTIVPN
+--------------------------------------------------------------------------------
+
+Archivo: /etc/openfortivpn/config
+
+Contenido:
+----------
+host = 190.145.76.28
+port = 443
+username = jalonso
+password = Inicial01$
+trusted-cert = 510d1e25db949d12712290029fe44108d96695a48de502f48e220e34ff147b4b
+set-routes = 1
+set-dns = 0
+pppd-use-peerdns = 0
+----------
+
+--------------------------------------------------------------------------------
+3. MODIFICACIÓN DEL SERVICIO SYSTEMD
+--------------------------------------------------------------------------------
+
+Archivo: /etc/systemd/system/openfortivpn.service
+
+Contenido:
+----------
+[Unit]
+Description=OpenFortiVPN service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/openfortivpn --config /etc/openfortivpn/config
+ExecStartPost=/bin/bash -c 'sleep 8 && /etc/openfortivpn/route-up.sh'
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+----------
+
+Comandos de activación:
+
+sudo systemctl daemon-reload
+sudo systemctl restart openfortivpn.service
+
+================================================================================
+VERIFICACIÓN POST-CONFIGURACIÓN
+================================================================================
+
+Verificar rutas activas:
+
+ip route | grep 192.168.169
+
+Salida esperada:
+192.168.169.0/24 dev ppp0 scope link
+192.168.169.34/31 dev ppp0 scope link
+
+Verificar conectividad impresora:
+
+ping -c 4 192.168.169.5
+nc -vz 192.168.169.5 9100 -w 5
+
+Resultado: Conectividad exitosa con latencia ~113ms
+
+Verificar log automático:
+
+cat /var/log/openfortivpn-routes.log
+
+================================================================================
+CONFIGURACIÓN DE IMPRESORA ZEBRA
+================================================================================
+
+Impresora agregada:
+
+sudo lpadmin -p ZeBRA_SC -E -v socket://192.168.169.5:9100 -m raw
+
+Especificaciones:
+- Nombre: ZeBRA_SC
+- IP: 192.168.169.5
+- Puerto: 9100 (AppSocket/HP JetDirect)
+- Protocolo: socket://
+- Modo: raw (sin filtros CUPS)
+
+Prueba de impresión:
+
+echo "^XA^FO50,50^A0N,60,60^FDTEST ZEBRA OK^FS^XZ" | lp -d ZeBRA_SC -o raw
+
+================================================================================
+IMPRESORAS CONFIGURADAS ACTUALMENTE
+================================================================================
+
+Nombre           | IP                | Puerto | Red VPN            | Estado
+-----------------|-------------------|--------|--------------------|----------
+COPGE_BODEGA     | 192.168.168.234   | 9100   | 192.168.168.0/24   | Operativa
+ZeBRA_SC         | 192.168.169.5     | 9100   | 192.168.169.0/24   | Operativa
+
+================================================================================
+COMANDOS ÚTILES AGREGADOS
+================================================================================
+
+--------------------------------------------------------------------------------
+Gestión de rutas VPN:
+--------------------------------------------------------------------------------
+
+# Ver todas las rutas VPN activas
+ip route | grep ppp0
+
+# Ver log de rutas automáticas
+cat /var/log/openfortivpn-routes.log
+
+# Agregar ruta manual (temporal)
+sudo ip route add 192.168.169.0/24 dev ppp0
+
+# Eliminar ruta manual
+sudo ip route del 192.168.169.0/24 dev ppp0
+
+# Reiniciar VPN y verificar rutas
+sudo systemctl restart openfortivpn.service
+sleep 15
+ip route | grep 192.168.169
+
+--------------------------------------------------------------------------------
+Verificación de conectividad impresoras:
+--------------------------------------------------------------------------------
+
+# Ping a impresora específica
+ping -c 4 192.168.169.5
+
+# Verificar puerto de impresión
+nc -vz 192.168.169.5 9100 -w 5
+
+# Estado de todas las impresoras
+lpstat -p -d
+
+================================================================================
+ESTADO FINAL ACTUALIZADO
+================================================================================
+
+COMPONENTE              | ESTADO  | OBSERVACIONES
+------------------------|---------|---------------------------------------
+CUPS Instalado          | OK      | Versión estable
+Servicio CUPS           | OK      | Active (running)
+VPN OpenFortiVPN        | OK      | Tunnel estable (ppp0)
+Rutas automáticas       | OK      | Script ejecutándose
+Red 192.168.168.0/24    | OK      | COPGE_BODEGA accesible
+Red 192.168.169.0/24    | OK      | ZeBRA_SC accesible
+Impresora Brother       | OK      | 192.168.168.234 operativa
+Impresora Zebra         | OK      | 192.168.169.5 operativa
+Integración Laravel     | PENDIENTE| Pendiente pruebas
+
+================================================================================
+CONSIDERACIONES TÉCNICAS
+================================================================================
+
+Ventajas del enfoque implementado:
+
+1. Persistencia: Las rutas se agregan automáticamente en cada conexión VPN
+2. Resiliencia: Si la VPN se cae y reconecta, las rutas se restablecen
+3. Logging: Se registran todas las operaciones para troubleshooting
+4. Escalabilidad: Fácil agregar más rutas editando el script
+
+Posibles mejoras futuras:
+
+- Agregar monitoreo automático de conectividad de impresoras
+- Implementar alertas si las rutas no se agregan correctamente
+- Crear script de diagnóstico automático de problemas VPN
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+Si la impresora no es accesible después de reiniciar VPN:
+
+# 1. Verificar estado VPN
+sudo systemctl status openfortivpn.service
+
+# 2. Verificar rutas
+ip route | grep 192.168.169
+
+# 3. Si falta la ruta, ejecutar manualmente el script
+sudo /etc/openfortivpn/route-up.sh
+
+# 4. Verificar log de errores
+cat /var/log/openfortivpn-routes.log
+sudo journalctl -xeu openfortivpn.service -n 50
+
+# 5. Reiniciar servicio VPN
+sudo systemctl restart openfortivpn.service
+
+================================================================================
+
+Responsable: jhondev
+Próxima Revisión: Recomendada en 30 días
+Última Actualización: 26 Noviembre 2025
+
+================================================================================
+FIN DE LA ADICIÓN AL INFORME
+================================================================================
