@@ -1,4 +1,6 @@
 Comando	Para qué lo usamos
+
+docker ps -a Ver contenedores
 mkdir copge-docker	Creamos la carpeta raíz del proyecto.
 mv copge/* .	Movimos los archivos de Laravel a la raíz para que Docker los viera.
 docker compose up -d --build	El más importante: Construye las imágenes y levanta los contenedores en segundo plano.
@@ -12,8 +14,13 @@ docker compose exec app composer install	Instala las librerías de PHP después 
 docker compose exec app php artisan key:generate	Genera la llave de seguridad única del proyecto en el .env.
 docker compose exec app php artisan reverb:start	Inicia el servidor de Websockets para el tiempo real.
 
+docker exec -it mi-servidor-mysql mysql -u root -ppassword123 -e "SHOW DATABASES;" ver esquemas de base de datos 
 docker exec -i mi-servidor-mysql mysql -u root -p[pass] [bd] < [ruta/archivo.sql]	Importar un Backup: Traer los datos reales de producción al Docker local.
+si lo tiene en descargas con so windows 
+docker exec -i mi-servidor-mysql mysql -u root -ppassword123 copge < "/mnt/c/Users/PROGRAMADOR2/Downloads/backup_26_03_2026_05_00.sql/backup_26_03_2026_05_00.sql"
 docker exec -it mi-servidor-mysql mysql -u root -p	Entrar a la consola de MySQL para tirar queries directas.
+para probar 
+docker exec -i mi-servidor-mysql mysql -u root -ppasordsw123 copge -e "SHOW TABLES;"
 
 docker compose run --rm node npm install	Instala las librerías de Node (Vue, Axios, Echo).
 docker compose run --rm node npm run dev	Compila los assets de Vue para que la interfaz se vea bien.
@@ -24,3 +31,39 @@ docker compose exec app chown -R www-data:www-data storage bootstrap/cache	Le da
 git stash	"Congela" tus cambios actuales (como el Dockerfile) para poder cambiar de rama.
 git stash pop	"Descongela" tus cambios después de un pull.
 git config --global core.autocrlf input	Evita problemas de saltos de línea entre Windows y Linux.
+
+
+probar en navegador  http://localhost:8080/
+
+si no funciona 
+Están los contenedores realmente corriendo
+docker ps
+
+# Ver qué dice Nginx (el que recibe la petición)
+docker compose logs web
+
+# Ver qué dice Laravel (el que procesa la petición)
+docker compose logs app
+Permisos de Carpeta
+docker compose exec app chown -R www-data:www-data storage bootstrap/cache public
+docker compose exec app chmod -R 775 storage bootstrap/cache public
+
+#Revisar index.php 
+ls -l public/index.php
+
+#comando para ver si el contenedor de Nginx responde internamente
+docker exec -it copge-nginx curl -I localhost
+
+#si encuentra el error # 1. Apaga lo que esté mal
+docker compose down
+
+# 2. Levanta de nuevo
+docker compose up -d
+
+docker compose down --volumes --remove-orphans  Detener y eliminar contenedores/redes:
+
+cd ..
+rm -rf copge-docker Eliminar la carpeta del proyecto (Cuidado: esto borra todo lo local):
+
+# Esto borra la carpeta donde MySQL guarda los datos físicos
+sudo rm -rf datos_mysql/
