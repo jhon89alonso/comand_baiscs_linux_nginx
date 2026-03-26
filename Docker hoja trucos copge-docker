@@ -1,0 +1,26 @@
+Comando	Para qué lo usamos
+mkdir copge-docker	Creamos la carpeta raíz del proyecto.
+mv copge/* .	Movimos los archivos de Laravel a la raíz para que Docker los viera.
+docker compose up -d --build	El más importante: Construye las imágenes y levanta los contenedores en segundo plano.
+docker compose down	Apaga y elimina los contenedores (no borra los datos de la DB si usas volúmenes).
+docker compose logs -f [servicio]	Para ver qué le duele al sistema (ej. logs web o logs app) en tiempo real.
+docker ps	Lista los contenedores activos y sus puertos (8080, 3307, etc.).
+
+docker compose exec app php artisan migrate	Crea las tablas de la base de datos en el contenedor MySQL.
+docker compose exec app php artisan optimize:clear	Limpia TODA la caché (rutas, vistas, config). Úsalo cuando algo no cargue.
+docker compose exec app composer install	Instala las librerías de PHP después de un git pull.
+docker compose exec app php artisan key:generate	Genera la llave de seguridad única del proyecto en el .env.
+docker compose exec app php artisan reverb:start	Inicia el servidor de Websockets para el tiempo real.
+
+docker exec -i mi-servidor-mysql mysql -u root -p[pass] [bd] < [ruta/archivo.sql]	Importar un Backup: Traer los datos reales de producción al Docker local.
+docker exec -it mi-servidor-mysql mysql -u root -p	Entrar a la consola de MySQL para tirar queries directas.
+
+docker compose run --rm node npm install	Instala las librerías de Node (Vue, Axios, Echo).
+docker compose run --rm node npm run dev	Compila los assets de Vue para que la interfaz se vea bien.
+docker compose run --rm node npm run watch	Se queda escuchando cambios; si editas un .vue, se compila solo.
+
+sudo chown -R $USER:$USER .	Le devuelve el poder a tu usuario de Linux para que puedas hacer git pull o stash.
+docker compose exec app chown -R www-data:www-data storage bootstrap/cache	Le da poder al servidor web para escribir logs y caché (quita el error 500).
+git stash	"Congela" tus cambios actuales (como el Dockerfile) para poder cambiar de rama.
+git stash pop	"Descongela" tus cambios después de un pull.
+git config --global core.autocrlf input	Evita problemas de saltos de línea entre Windows y Linux.
